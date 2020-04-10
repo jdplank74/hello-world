@@ -1,0 +1,33 @@
+pipeline {
+   agent any
+
+   stages {
+      stage('Get Sources') {
+         steps {
+            echo 'Get Source for Hello World'
+            git 'https://github.com/jdplank74/hello-world.git'
+         }
+      }
+      
+      stage('Build')
+      {
+          steps {
+            dir('.\\HelloWorld') {
+                echo 'Clean Workspace'
+                bat label: '', script: 'dotnet clean'
+                bat label: '', script: 'dotnet build --configuration Release'
+            }
+          }
+      }
+      
+      stage('Archive')
+      {
+        steps {
+            dir(".\\HelloWorld\\Helloworld\\bin\\Release\\netcoreapp3.0") {
+                echo 'Archive build artifacts'
+                archiveArtifacts '*.*'    
+            }
+        }  
+      }
+   }
+}
